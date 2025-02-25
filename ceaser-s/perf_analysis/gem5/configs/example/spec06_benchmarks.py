@@ -3,7 +3,13 @@ from m5.objects import *
 import os
 
 ## Paths
-SPEC_PATH       = os.environ["SPEC_PATH"]
+SPEC_PATH       = ""
+try:
+    SPEC_PATH = os.environ["SPEC_PATH"]
+except:
+    pass
+
+
 RUN_DIR_prefix  = '/benchspec/CPU2006/'
 RUN_DIR_postfix = '/run/run_base_ref_amd64-m64-gcc41-nn.0000'
 x86_suffix = '_base.amd64-m64-gcc41-nn'
