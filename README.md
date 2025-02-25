@@ -7,7 +7,7 @@ We also open-source all cache designs evaluated in the paper
 - **ceaser**: Implementation of CEASER (including rekeying, but restricting the number of skews to 1).
 
 CEASER is implemented on top of MIRAGE by adding the relevant functionality to `SkewedAssocRand` in `src/mem/cache/tags/indexing_policies/skewed_assoc_randomized.hh`.
-To build and run CEASER, navigate to `ceaser/` and follow the commands in README.md to build. A sample run of CEASER:
+To build and run CEASER, navigate to `randomized_cache_hello_world/` and follow the `setup.sh` to build and `run_ceaser.sh` to run. A sample run of CEASER:
 
 ```
 ./build/X86/gem5.opt --outdir ./stats configs/example/spec06_config_multiprogram.py --benchmark=xz --num-cpus=2 --mem-size=8GB --mem-type=DDR4_2400_8x8 --cpu-type TimingSimpleCPU --caches --l2cache --l1d_size=512B --l1i_size=32kB --l2_size=16MB --l1d_assoc=8 --l1i_assoc=8 --l2_assoc=16 --mirage_mode=ceaser --l2_TDR=1.75 --l2_EncrLat=3 --prog-interval=300Hz --maxinsts=1000000000 
@@ -18,7 +18,7 @@ This runs the SPEC2017 benchmark xz on our CEASER implementation (note `--mirage
 - **ceaser-s**: Implementation of CEASER-S (including rekeying, but with no restrictions on the number of skews).
 
 CEASER-S is implemented on top of MIRAGE by adding the relevant functionality to `SkewedAssocRand` in `src/mem/cache/tags/indexing_policies/skewed_assoc_randomized.hh`.
-To build and run CEASER-S, navigate to `ceaser-s/` and follow the commands in README.md to build. A sample run of CEASER-S:
+To build and run CEASER-S, navigate to `randomized_cache_hello_world/` and follow the `setup.sh` to build and `run_ceaser_s.sh` to run. A sample run of CEASER-S:
 
 ```
 ./build/X86/gem5.opt --outdir ./stats configs/example/spec06_config_multiprogram.py --benchmark=xz --num-cpus=2 --mem-size=8GB --mem-type=DDR4_2400_8x8 --cpu-type TimingSimpleCPU --caches --l2cache --l1d_size=512B --l1i_size=32kB --l2_size=16MB --l1d_assoc=8 --l1i_assoc=8 --l2_assoc=16 --mirage_mode=ceaser --l2_numSkews=2 --l2_TDR=1.75 --l2_EncrLat=3 --prog-interval=300Hz --maxinsts=1000000000 
@@ -28,8 +28,8 @@ This runs the SPEC2017 benchmark xz on our CEASER-S implementation (note `--mira
 
 - **mirage**: Borrowed from https://github.com/gururaj-s/mirage; has the implementation of MIRAGE, SCATTER, and baseline set-associative.
 
-Navigate to `/mirage/` and follow the build and run instructions in README for MIRAGE, SCATTER-Cache, and Baseline. We do not make any structural modifications
-to these cache designs. For completeness, the commands to run SPEC2017 benchmark xz on each of these designs (note the only difference is --mirage\_mode`).
+Navigate to `randomized_cache_hello_world` for build and run scripts for MIRAGE, Scatter-Cache, and Baseline cache. We do not make any structural modifications
+to these cache designs. For completeness, the commands to run SPEC2017 benchmark xz on each of these designs (note the only difference is `--mirage_mode`).
 
 ```
 ./build/X86/gem5.opt --outdir ./stats configs/example/spec06_config_multiprogram.py --benchmark=xz --num-cpus=2 --mem-size=8GB --mem-type=DDR4_2400_8x8 --cpu-type TimingSimpleCPU --caches --l2cache --l1d_size=512B --l1i_size=32kB --l2_size=16MB --l1d_assoc=8 --l1i_assoc=8 --l2_assoc=16 --mirage_mode=mirage --l2_numSkews=2 --l2_TDR=1.75 --l2_EncrLat=3 --prog-interval=300Hz --maxinsts=1000000000 
