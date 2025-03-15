@@ -137,7 +137,7 @@ spurious.cmd = [spurious.executable]
 
 multiprocesses.append(spurious)
 
-SPEC_PATH = None
+SPEC_PATH = "" 
 try:
     SPEC_PATH       = os.environ["SPEC_PATH"]
 except:
