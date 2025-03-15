@@ -132,77 +132,78 @@ if args:
 multiprocesses = []
 numThreads = 1
 spurious = Process(pid=100)
-spurious.executable = "/home/user1/mirage_runs/benchmark_wrappers/spurious_occupancy"
+spurious.executable = os.environ["BASE_DIR"] + "/randomized_cache_hello_world/spurious_occupancy"
 spurious.cmd = [spurious.executable]
 
 multiprocesses.append(spurious)
 
+SPEC_PATH       = os.environ["SPEC_PATH"]
 spec = Process(pid=101)
 
 if(options.cmd == "perlbench"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/500.perlbench_r/build/build_base_perfcount-m64.0000/perlbench_r"
-    spec.cmd = [spec.executable] + ['-I/home/user1/mirage_runs/SPEC2017/benchspec/CPU/500.perlbench_r/run/run_base_refrate_perfcount-m64.0000/lib', '/home/user1/mirage_runs/SPEC2017/benchspec/CPU/500.perlbench_r/run/run_base_refrate_perfcount-m64.0000/checkspam.pl', '2500', '5', '25', '11', '150', '1', '1', '1', '1']
+    spec.executable = SPEC_PATH + "/benchspec/CPU/500.perlbench_r/build/build_base_perfcount-m64.0000/perlbench_r"
+    spec.cmd = [spec.executable] + ['-I' + SPEC_PATH + '/benchspec/CPU/500.perlbench_r/run/run_base_refrate_perfcount-m64.0000/lib', SPEC_PATH + '/benchspec/CPU/500.perlbench_r/run/run_base_refrate_perfcount-m64.0000/checkspam.pl', '2500', '5', '25', '11', '150', '1', '1', '1', '1']
 
 elif(options.cmd == "cactu"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/507.cactuBSSN_r/run/run_base_refrate_perfcount-m64.0000/cactusBSSN_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["/home/user1/mirage_runs/SPEC2017/benchspec/CPU/507.cactuBSSN_r/run/run_base_refrate_perfcount-m64.0000/spec_ref.par"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/507.cactuBSSN_r/run/run_base_refrate_perfcount-m64.0000/cactusBSSN_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + [SPEC_PATH + "/benchspec/CPU/507.cactuBSSN_r/run/run_base_refrate_perfcount-m64.0000/spec_ref.par"]
 
 elif(options.cmd == "x264"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/x264_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["--pass", "1", "--stats", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/x264_stats.log", "--bitrate", "1000",
-            "--frames", "1000", "-o", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/BuckBunny_New.264", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/BuckBunny.yuv", "1280x720"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/x264_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + ["--pass", "1", "--stats", SPEC_PATH + "/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/x264_stats.log", "--bitrate", "1000",
+            "--frames", "1000", "-o", SPEC_PATH + "/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/BuckBunny_New.264", SPEC_PATH + "/benchspec/CPU/525.x264_r/run/run_base_refrate_perfcount-m64.0000/BuckBunny.yuv", "1280x720"]
 
 elif(options.cmd == "blender"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/526.blender_r/run/run_base_refrate_perfcount-m64.0000/blender_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["/home/user1/mirage_runs/SPEC2017/benchspec/CPU/526.blender_r/run/run_base_refrate_perfcount-m64.0000/sh3_no_char.blend", "--render-output", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/526.blender_r/run/run_base_refrate_perfcount-m64.0000/sh3_no_char_", "--threads", "1", "-b", "-F", "RAWTGA", "-s", "849", "-e", "849", "-a"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/526.blender_r/run/run_base_refrate_perfcount-m64.0000/blender_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + [SPEC_PATH + "/benchspec/CPU/526.blender_r/run/run_base_refrate_perfcount-m64.0000/sh3_no_char.blend", "--render-output", SPEC_PATH + "/benchspec/CPU/526.blender_r/run/run_base_refrate_perfcount-m64.0000/sh3_no_char_", "--threads", "1", "-b", "-F", "RAWTGA", "-s", "849", "-e", "849", "-a"]
 
 elif(options.cmd == "imagick"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/538.imagick_r/run/run_base_refrate_perfcount-m64.0000/imagick_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["-limit", "disk", "0", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/538.imagick_r/run/run_base_refrate_perfcount-m64.0000/refrate_input.tga", "-edge", "41", "-resample", "181%", "-emboss", "31", "-colorspace", "YUV", "-mean-shift", "19x19+15%", "-resize", "30%", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/538.imagick_r/run/run_base_refrate_perfcount-m64.0000/refrate_output.tga"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/538.imagick_r/run/run_base_refrate_perfcount-m64.0000/imagick_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + ["-limit", "disk", "0", SPEC_PATH + "/benchspec/CPU/538.imagick_r/run/run_base_refrate_perfcount-m64.0000/refrate_input.tga", "-edge", "41", "-resample", "181%", "-emboss", "31", "-colorspace", "YUV", "-mean-shift", "19x19+15%", "-resize", "30%", SPEC_PATH + "/benchspec/CPU/538.imagick_r/run/run_base_refrate_perfcount-m64.0000/refrate_output.tga"]
 
 elif(options.cmd == "leela"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/541.leela_r/run/run_base_refrate_perfcount-m64.0000/leela_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["/home/user1/mirage_runs/SPEC2017/benchspec/CPU/541.leela_r/run/run_base_refrate_perfcount-m64.0000/ref.sgf"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/541.leela_r/run/run_base_refrate_perfcount-m64.0000/leela_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + [SPEC_PATH + "/benchspec/CPU/541.leela_r/run/run_base_refrate_perfcount-m64.0000/ref.sgf"]
 
 elif(options.cmd == "nab"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/544.nab_r/run/run_base_refrate_perfcount-m64.0000/nab_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["/home/user1/mirage_runs/SPEC2017/benchspec/CPU/544.nab_r/run/run_base_refrate_perfcount-m64.0000/1am0", "1122214447", "122"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/544.nab_r/run/run_base_refrate_perfcount-m64.0000/nab_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + [SPEC_PATH + "/benchspec/CPU/544.nab_r/run/run_base_refrate_perfcount-m64.0000/1am0", "1122214447", "122"]
 
 elif(options.cmd == "fotonik"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/549.fotonik3d_r/run/run_base_refrate_perfcount-m64.0000/fotonik3d_r_base.perfcount-m64"
+    spec.executable = SPEC_PATH + "/benchspec/CPU/549.fotonik3d_r/run/run_base_refrate_perfcount-m64.0000/fotonik3d_r_base.perfcount-m64"
     spec.cmd = [spec.executable]
 
 elif(options.cmd == "xz"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/557.xz_r/run/run_base_refrate_perfcount-m64.0000/xz_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ["/home/user1/mirage_runs/SPEC2017/benchspec/CPU/557.xz_r/run/run_base_refrate_perfcount-m64.0000/cld.tar.xz", "160",  "19cf30ae51eddcbefda78dd06014b4b96281456e078ca7c13e1c0c9e6aaea8dff3efb4ad6b0456697718cede6bd5454852652806a657bb56e07d61128434b474", "59796407", "61004416", "6"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/557.xz_r/run/run_base_refrate_perfcount-m64.0000/xz_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + [SPEC_PATH + "/benchspec/CPU/557.xz_r/run/run_base_refrate_perfcount-m64.0000/cld.tar.xz", "160",  "19cf30ae51eddcbefda78dd06014b4b96281456e078ca7c13e1c0c9e6aaea8dff3efb4ad6b0456697718cede6bd5454852652806a657bb56e07d61128434b474", "59796407", "61004416", "6"]
 
 elif(options.cmd == "gcc"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/502.gcc_r/build/build_base_perfcount-m64.0000/cpugcc_r"
-    spec.cmd = [spec.executable] + ['/home/user1/mirage_runs/SPEC2017/benchspec/CPU/502.gcc_r/build/build_peak_perfcount-m64.0000/200.c', '-o', '/home/user1/mirage_runs/SPEC2017/benchspec/CPU/502.gcc_r/build/build_peak_perfcount-m64.0000/200.s']
+    spec.executable = SPEC_PATH + "/benchspec/CPU/502.gcc_r/build/build_base_perfcount-m64.0000/cpugcc_r"
+    spec.cmd = [spec.executable] + [SPEC_PATH + '/benchspec/CPU/502.gcc_r/build/build_peak_perfcount-m64.0000/200.c', '-o', SPEC_PATH + '/benchspec/CPU/502.gcc_r/build/build_peak_perfcount-m64.0000/200.s']
 
 elif(options.cmd == "mcf"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/505.mcf_r/build/build_base_perfcount-m64.0000/mcf_r"
-    spec.cmd = [spec.executable] + ['/home/user1/mirage_runs/SPEC2017/benchspec/CPU/505.mcf_r/data/train/input/inp.in']
+    spec.executable = SPEC_PATH + "/benchspec/CPU/505.mcf_r/build/build_base_perfcount-m64.0000/mcf_r"
+    spec.cmd = [spec.executable] + [SPEC_PATH + '/benchspec/CPU/505.mcf_r/data/train/input/inp.in']
 
 elif(options.cmd == "namd"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/508.namd_r/build/build_base_perfcount-m64.0000/namd_r"
-    spec.cmd = [spec.executable] + ['--input', '/home/user1/mirage_runs/SPEC2017/benchspec/CPU/508.namd_r/data/all/input/apoa1.input', '--output', '/home/user1/mirage_runs/SPEC2017/benchspec/CPU/508.namd_r/data/all/input/namd.out', '--iterations', '38']
+    spec.executable = SPEC_PATH + "/benchspec/CPU/508.namd_r/build/build_base_perfcount-m64.0000/namd_r"
+    spec.cmd = [spec.executable] + ['--input', SPEC_PATH + '/benchspec/CPU/508.namd_r/data/all/input/apoa1.input', '--output', SPEC_PATH + '/benchspec/CPU/508.namd_r/data/all/input/namd.out', '--iterations', '38']
 
 elif(options.cmd == "povray"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/511.povray_r/build/build_base_perfcount-m64.0000/povray_r"
-    spec.cmd = [spec.executable] + ["/home/user1/mirage_runs/SPEC2017/benchspec/CPU/511.povray_r/data/refrate/input/SPEC-benchmark-ref.ini"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/511.povray_r/build/build_base_perfcount-m64.0000/povray_r"
+    spec.cmd = [spec.executable] + [SPEC_PATH + "/benchspec/CPU/511.povray_r/data/refrate/input/SPEC-benchmark-ref.ini"]
 
 elif(options.cmd == "lbm"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/519.lbm_r/build/build_base_perfcount-m64.0000/lbm_r"
-    spec.cmd = [spec.executable] + ['300', "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/519.lbm_r/data/refrate/input/lbm.in", '0', '0', "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/519.lbm_r/data/refrate/input/100_100_130_ldc.of"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/519.lbm_r/build/build_base_perfcount-m64.0000/lbm_r"
+    spec.cmd = [spec.executable] + ['300', SPEC_PATH + "/benchspec/CPU/519.lbm_r/data/refrate/input/lbm.in", '0', '0', SPEC_PATH + "/benchspec/CPU/519.lbm_r/data/refrate/input/100_100_130_ldc.of"]
 
 elif(options.cmd == "omnetpp"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/520.omnetpp_r/run/run_base_refrate_perfcount-m64.0000/omnetpp_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + [omnetpp.executable] + ['-c', "General", "-r", "0"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/520.omnetpp_r/run/run_base_refrate_perfcount-m64.0000/omnetpp_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] +  ['-c', "General", "-r", "0"]
 
 elif(options.cmd == "xalancbmk"):
-    spec.executable = "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/523.xalancbmk_r/run/run_base_refrate_perfcount-m64.0000/cpuxalan_r_base.perfcount-m64"
-    spec.cmd = [spec.executable] + ['-v',"/home/user1/mirage_runs/SPEC2017/benchspec/CPU/523.xalancbmk_r/run/run_base_refrate_perfcount-m64.0000/t5.xml", "/home/user1/mirage_runs/SPEC2017/benchspec/CPU/523.xalancbmk_r/run/run_base_refrate_perfcount-m64.0000/xalanc.xsl"]
+    spec.executable = SPEC_PATH + "/benchspec/CPU/523.xalancbmk_r/run/run_base_refrate_perfcount-m64.0000/cpuxalan_r_base.perfcount-m64"
+    spec.cmd = [spec.executable] + ['-v', SPEC_PATH + "/benchspec/CPU/523.xalancbmk_r/run/run_base_refrate_perfcount-m64.0000/t5.xml", SPEC_PATH + "/benchspec/CPU/523.xalancbmk_r/run/run_base_refrate_perfcount-m64.0000/xalanc.xsl"]
 
 
 multiprocesses.append(spec)
