@@ -177,7 +177,10 @@ def config_cache(options, system):
                     system.l2.replacement_policy = RandomSkewfairRP() 
                 elif ( (int(system.l2.numSkews) > 1) ) :
                     system.l2.replacement_policy = RandomRP() #For more than 1 skew, use Random Repl   
-
+            if(options.l2_numSkews > 1):
+                print("Warning: Number of skews requested > 1. Defaulting to 1")
+                system.l2.numSkews = 1 # Override user-input
+            
             #Set Cache Lookup Latency
             if ((str(system.l2.vwayCache) == "True") and (str(system.l2.randomizedIndexing) == "True")): # Lookup Latency is 24 for Vway + Rand (MIRAGE)
                 system.l2.tag_latency      = l2latency + options.l2_EncrLat + 1 #4
