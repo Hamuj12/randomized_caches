@@ -180,7 +180,21 @@ def config_cache(options, system):
             if(options.l2_numSkews > 1):
                 print("Warning: Number of skews requested > 1. Defaulting to 1")
                 system.l2.numSkews = 1 # Override user-input
-            
+           
+            if(options.replacement_policy is not None):
+                if(options.replacement_policy is not None):
+                    system.l2.replacement_policy = RandomRP()
+                elif(options.replacement_policy == "TreePLRURP"):
+                    system.l2.replacement_policy = TreePLRURP()
+                elif(options.replacement_policy == "WeightedLRURP"):
+                    system.l2.replacement_policy = WeightedLRURP()
+                elif(options.replacement_policy == "RRIPRP"):
+                    system.l2.replacement_policy = RRIPRP()
+                elif(options.replacement_policy == "FIFORP"):
+                    system.l2.replacement_policy = FIFORP()
+                else:
+                    system.l2.replacement_policy = RandomRP()
+
             #Set Cache Lookup Latency
             if ((str(system.l2.vwayCache) == "True") and (str(system.l2.randomizedIndexing) == "True")): # Lookup Latency is 24 for Vway + Rand (MIRAGE)
                 system.l2.tag_latency      = l2latency + options.l2_EncrLat + 1 #4

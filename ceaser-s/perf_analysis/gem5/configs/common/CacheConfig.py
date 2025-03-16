@@ -155,18 +155,6 @@ def config_cache(options, system):
             else:
                 fatal("Used a mirage_mode that is not supported")
 
-            if(options.replacement_policy is not None):
-                if(options.replacement_policy == "RandomRP"):
-                    system.l2.replacement_policy = RandomRP()
-                elif(options.replacement_policy == "TreePLRURP"):
-                    system.l2.replacement_policy = TreePLRURP()
-                elif(options.replacement_policy == "WeightedLRURP"):
-                    system.l2.replacement_policy = WeightedLRURP()
-                elif(options.replacement_policy == "RRIPRP"):
-                    system.l2.replacement_policy = RRIPRP()
-                elif(options.replacement_policy == "FIFORP"):
-                    system.l2.replacement_policy = FIFORP()
-
             if (str(system.l2.vwayCache) == "True"):
                 assert str(system.l2.randomizedIndexing) == "True"
                 system.l2.TDR = options.l2_TDR #Set Tag-Data ratio for Vway
@@ -187,7 +175,18 @@ def config_cache(options, system):
                     system.l2.replacement_policy = RandomSkewfairRP() 
                 elif ( (int(system.l2.numSkews) > 1) ) :
                     system.l2.replacement_policy = RandomRP() #For more than 1 skew, use Random Repl
-            
+            if(options.replacement_policy is not None):
+                if(options.replacement_policy == "RandomRP"):
+                    system.l2.replacement_policy = RandomRP()
+                elif(options.replacement_policy == "TreePLRURP"):
+                    system.l2.replacement_policy = TreePLRURP()
+                elif(options.replacement_policy == "WeightedLRURP"):
+                    system.l2.replacement_policy = WeightedLRURP()
+                elif(options.replacement_policy == "RRIPRP"):
+                    system.l2.replacement_policy = RRIPRP()
+                elif(options.replacement_policy == "FIFORP"):
+                    system.l2.replacement_policy = FIFORP()
+
             #Set Cache Lookup Latency
             if ((str(system.l2.vwayCache) == "True") and (str(system.l2.randomizedIndexing) == "True")): # Lookup Latency is 24 for Vway + Rand (MIRAGE)
                 system.l2.tag_latency      = l2latency + options.l2_EncrLat + 1 #4
