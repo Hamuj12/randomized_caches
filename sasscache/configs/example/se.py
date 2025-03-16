@@ -137,7 +137,11 @@ spurious.cmd = [spurious.executable]
 
 multiprocesses.append(spurious)
 
-SPEC_PATH       = os.environ["SPEC_PATH"]
+SPEC_PATH = "" 
+try:
+    SPEC_PATH       = os.environ["SPEC_PATH"]
+except:
+    pass
 spec = Process(pid=101)
 
 if(options.cmd == "perlbench"):
