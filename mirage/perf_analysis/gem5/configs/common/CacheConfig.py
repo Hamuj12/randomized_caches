@@ -166,7 +166,7 @@ def config_cache(options, system):
                     system.l2.replacement_policy = RandomSkewfairRP() 
                 elif ( (int(system.l2.numSkews) > 1) ) :
                     system.l2.replacement_policy = RandomRP() #For more than 1 skew, use Random Repl
-            if(options.replacement_policy is not None):
+            if(options.mirage_mode != "skew-vway-rand" and options.replacement_policy is not None):
                 # Set user defined replacement policy
                 if(options.replacement_policy == "RandomRP"):
                     system.l2.replacement_policy = RandomRP()
