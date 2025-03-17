@@ -182,9 +182,7 @@ def config_cache(options, system):
                 system.l2.numSkews = 1 # Override user-input
            
             if(options.replacement_policy is not None):
-                if(options.replacement_policy is not None):
-                    system.l2.replacement_policy = RandomRP()
-                elif(options.replacement_policy == "TreePLRURP"):
+                if(options.replacement_policy == "TreePLRURP"):
                     system.l2.replacement_policy = TreePLRURP()
                 elif(options.replacement_policy == "WeightedLRURP"):
                     system.l2.replacement_policy = WeightedLRURP()
