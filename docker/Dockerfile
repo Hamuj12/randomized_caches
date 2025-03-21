@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y \
     libhdf5-dev \
     m4 \
     sudo \
-    virtualenv
+    virtualenv \
+    python-dev
 
 RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py \
     && python2.7 /tmp/get-pip.py \
