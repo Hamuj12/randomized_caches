@@ -13,7 +13,9 @@ RUN apt-get update && apt-get install -y \
     gcc-7 g++-7 \
     zlib1g-dev \
     libhdf5-dev \
-    m4
+    m4 \
+    sudo \
+    virtualenv
 
 RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O /tmp/get-pip.py \
     && python2.7 /tmp/get-pip.py \
