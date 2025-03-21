@@ -58,7 +58,17 @@ The plot showing the covert channel comparison between different cache designs c
 
 Refer `perf_runs/`.
 
-**Note**: We do not provide the SPEC2017 source due to its licensing. In all our experiments, we have used the generic `Example-gcc-linux-x86.cfg` config file (provided as part of SPEC2017 package) to build SPEC2017.
+**Note**: We do not provide the SPEC2017 source due to its licensing. 
+
+To build SPEC2017, follow these steps:
+
+1. Copy the config file `spec_config/randomized_caches.cfg` to the `config/` subdirectory of your SPEC installation
+
+2. `source shrc`
+
+3. `runcpu --rebuild --action run --config randomized_caches.cfg --tune base,peak -O -o csv all`
+
+This will set up the required directory structure for the gem5 simulations to pick up relevant SPEC binaries
 
 ## Process fingerprinting
 
