@@ -49,6 +49,7 @@
 #include "mem/cache/tags/base.hh"
 
 #include <cassert>
+#include <string>
 
 #include "base/types.hh"
 #include "mem/cache/replacement_policies/replaceable_entry.hh"
@@ -64,6 +65,7 @@ BaseTags::BaseTags(const Params *p)
       system(p->system), indexingPolicy(p->indexing_policy),
       warmupBound((p->warmup_percentage/100.0) * (p->size / p->block_size)),
       warmedUp(false), numBlocks(p->size / p->block_size),
+      numOccGroups(4),
       dataBlks(new uint8_t[p->size]), // Allocate data storage in one big chunk
       stats(*this)
 {
@@ -154,6 +156,10 @@ BaseTags::computeStatsVisitor(CacheBlk &blk)
     if (blk.isValid()) {
         assert(blk.task_id < ContextSwitchTaskId::NumTaskId);
         stats.occupanciesTaskId[blk.task_id]++;
+        if (numOccGroups > 0) {
+            const auto group = blk.getSet() % numOccGroups; // Matches sender grouping.
+            stats.occGroup[group]++;
+        }
         assert(blk.tickInserted <= curTick());
         Tick age = curTick() - blk.tickInserted;
 
@@ -180,6 +186,12 @@ BaseTags::computeStats()
         stats.occupanciesTaskId[i] = 0;
         for (unsigned j = 0; j < 5; ++j) {
             stats.ageTaskId[i][j] = 0;
+        }
+    }
+
+    if (numOccGroups > 0) {
+        for (unsigned i = 0; i < numOccGroups; ++i) {
+            stats.occGroup[i] = 0;
         }
     }
 
@@ -221,6 +233,8 @@ BaseTags::BaseTagStats::BaseTagStats(BaseTags &_tags)
                 "Average occupied blocks per requestor"),
     avgOccs(this, "occ_percent",
             "Average percentage of cache occupancy"),
+    occGroup(this, "occ_group",
+             "Occupied blocks per logical set group"),
     occupanciesTaskId(this, "occ_task_id_blocks",
                       "Occupied blocks per task id"),
     ageTaskId(this, "age_task_id_blocks", "Occupied blocks per task id"),
@@ -259,6 +273,16 @@ BaseTags::BaseTagStats::regStats()
     }
 
     avgOccs = occupancies / Stats::constant(tags.numBlocks);
+
+    if (tags.numOccGroups > 0) {
+        occGroup
+            .init(tags.numOccGroups)
+            .flags(nozero | nonan)
+            ;
+        for (unsigned i = 0; i < tags.numOccGroups; i++) {
+            occGroup.subname(i, std::to_string(i));
+        }
+    }
 
     occupanciesTaskId
         .init(ContextSwitchTaskId::NumTaskId)
