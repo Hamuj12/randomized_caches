@@ -4,6 +4,9 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export BASE_DIR=${BASE_DIR:-"$(cd "$SCRIPT_DIR/.." && pwd)"}
+if [[ -z "${RC_SYMBOLS+x}" && -n "${SYMBOLS:-}" ]]; then
+  RC_SYMBOLS=$SYMBOLS
+fi
 export RC_SYMBOLS=${RC_SYMBOLS:-0123}
 export SENDER_MODE=${SENDER_MODE:-single}
 
@@ -48,6 +51,20 @@ rc_select_sender() {
   rc_build_senders
   pushd "$BASE_DIR/randomized_cache_hello_world" >/dev/null
   ln -sf "$sender" spurious_occupancy
+  ln -sf "$sender" multi_bit_sender
   popd >/dev/null
   echo "[*] Using sender: $sender (mode=$SENDER_MODE, symbols=$RC_SYMBOLS)" >&2
+}
+
+rc_write_spec_metadata() {
+  local outdir="$1"
+  local benchmark="$2"
+  mkdir -p "$outdir"
+  cat >"$outdir/spec_metadata.json" <<EOF
+{
+  "benchmark": "${benchmark:-}",
+  "sender_mode": "$SENDER_MODE",
+  "symbols": "$RC_SYMBOLS"
+}
+EOF
 }
