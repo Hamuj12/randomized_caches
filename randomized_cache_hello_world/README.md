@@ -33,7 +33,30 @@ Pre-requisites:
 2. Activate the created venv through `. ${BASE_DIR}/randomized_cache_hello_world/venv27/bin/activate`
 
 
-Invoke `bash run_mirage.sh` to execute a test program in MIRAGE. Alternatively, use `run_scatter.sh` for Scatter-cache, `run_ceaser.sh` for CEASER, and `run_ceaser_s.sh` for CEASER-S.
+Build the sender binaries once with:
+
+```
+bash build_sender.sh
+```
+
+Invoke `bash run_mirage.sh` to execute a test program in MIRAGE. Alternatively, use `run_scatter.sh` for Scatter-cache, `run_ceaser.sh` for CEASER, and `run_ceaser_s.sh` for CEASER-S. All run scripts respect the `BASE_DIR` variable (defaulting to the repository root) and will automatically symlink the appropriate sender binary.
+
+### Selecting the sender
+
+* `SENDER_MODE=single` (default) selects the legacy single-bit sender (`spurious_occupancy_nolibc`).
+* `SENDER_MODE=multibit` selects the new multi-symbol sender (`multi_bit_sender_nolibc`).
+
+When using multibit mode you can customize the transmitted symbols:
+
+* `RC_SYMBOLS` sets the alphabet (default `0123`).
+* `RC_MESSAGE` overrides the sequence to transmit (defaults to the alphabet).
+* `RC_REPEAT` repeats the message (default `1`).
+
+Example (MIRAGE, TimingSimpleCPU, multi-bit mode):
+
+```
+SENDER_MODE=multibit RC_SYMBOLS=ABCD RC_MESSAGE=ACDC RC_REPEAT=2 bash run_mirage.sh
+```
 
 **Expected Outcome**: At the end of simulation, gem5 shall output a message and exit the thread context, as such:
 

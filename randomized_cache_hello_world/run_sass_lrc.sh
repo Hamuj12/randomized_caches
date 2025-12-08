@@ -1,38 +1,39 @@
 #!/usr/bin/env bash
-set -eo pipefail
+# SASSCache TimingSimpleCPU (legacy LRC helper) using nolibc sender.
+set -euo pipefail
 
-# --- required by you ---
-export BASE_DIR="/misc/scratch/hm25936/randomized_caches"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/run_common.sh"
 
-SCR="/misc/scratch/hm25936"
-ENV="py27-gem5"
 GEM5="$BASE_DIR/sasscache/build/X86/gem5.opt"
 CFG="$BASE_DIR/sasscache/configs/example/se.py"
-OUTDIR="./stats_sasscache"
+OUTDIR="${OUTDIR:-./stats_sasscache}"
 
-source "$SCR/miniconda3/bin/activate" "$ENV"
-export PYTHONHOME="$SCR/miniconda3/envs/$ENV"
-export PYTHONPATH="$SCR/miniconda3/envs/$ENV/lib/python2.7/site-packages"
+NUM_CPUS=${NUM_CPUS:-1}
+MEM_SIZE=${MEM_SIZE:-8GB}
+MEM_TYPE=${MEM_TYPE:-DDR4_2400_8x8}
+L1D_SIZE=${L1D_SIZE:-512B}
+L1I_SIZE=${L1I_SIZE:-32kB}
+L2_SIZE=${L2_SIZE:-16MB}
+L1D_ASSOC=${L1D_ASSOC:-8}
+L1I_ASSOC=${L1I_ASSOC:-8}
+L2_ASSOC=${L2_ASSOC:-16}
 
-if [[ ! -x ./spurious_occupancy_nolibc ]]; then
-  echo "Missing ./spurious_occupancy_nolibc. Build it via the minimal sanity script first." >&2
-  exit 1
-fi
-rm -f ./spurious_occupancy
-ln -s spurious_occupancy_nolibc spurious_occupancy
+rc_activate_py27
+rc_select_sender
 
 mkdir -p "$OUTDIR"
 
-echo "[*] Running SASSCache (SE mode) with no-libc test binary..."
-"$GEM5" --outdir "$OUTDIR" \
-  "$CFG" \
+echo "[*] Running SASSCache with sender: $SENDER_MODE"
+
+set -- "$CFG" \
   -c "$(pwd)/spurious_occupancy" \
   --cpu-type=TimingSimpleCPU \
-  --num-cpus=1 \
-  --mem-size=8GB \
-  --mem-type=DDR4_2400_8x8 \
+  --num-cpus="$NUM_CPUS" \
+  --mem-size="$MEM_SIZE" \
+  --mem-type="$MEM_TYPE" \
   --caches --l2cache \
-  --l1d_size=512B --l1i_size=32kB --l2_size=16MB \
-  --l1d_assoc=8 --l1i_assoc=8 --l2_assoc=16
+  --l1d_size="$L1D_SIZE" --l1i_size="$L1I_SIZE" --l2_size="$L2_SIZE" \
+  --l1d_assoc="$L1D_ASSOC" --l1i_assoc="$L1I_ASSOC" --l2_assoc="$L2_ASSOC"
 
-echo "✔ SASSCache run done. See $OUTDIR/"
+"$GEM5" --outdir "$OUTDIR" "$@"

@@ -1,40 +1,47 @@
 #!/usr/bin/env bash
-# No -u here: conda deactivate hooks don't like nounset.
-set -eo pipefail
+# CEASER-S DerivO3CPU example using nolibc sender (legacy helper).
+set -euo pipefail
 
-BASE_DIR=${BASE_DIR:-"$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"}
-: ${SCR:=/misc/scratch/hm25936}
-: ${ENV:=py27-gem5}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/run_common.sh"
+
 GEM5="$BASE_DIR/ceaser-s/perf_analysis/gem5/build/X86/gem5.opt"
 CFG="$BASE_DIR/ceaser-s/perf_analysis/gem5/configs/example/spec06_config_multiprogram_o3_example.py"
-OUTDIR="./stats_ceaser_s_o3"
+OUTDIR="${OUTDIR:-./stats_ceaser_s_o3}"
 
-source "$SCR/miniconda3/bin/activate" "$ENV"
-export PYTHONHOME="$SCR/miniconda3/envs/$ENV"
-export PYTHONPATH="$SCR/miniconda3/envs/$ENV/lib/python2.7/site-packages"
+NUM_CPUS=${NUM_CPUS:-1}
+MEM_SIZE=${MEM_SIZE:-8GB}
+MEM_TYPE=${MEM_TYPE:-DDR4_2400_8x8}
+L1D_SIZE=${L1D_SIZE:-512B}
+L1I_SIZE=${L1I_SIZE:-32kB}
+L2_SIZE=${L2_SIZE:-16MB}
+L1D_ASSOC=${L1D_ASSOC:-8}
+L1I_ASSOC=${L1I_ASSOC:-8}
+L2_ASSOC=${L2_ASSOC:-16}
+MIRAGE_MODE=${MIRAGE_MODE:-ceaser-s}
+L2_NUM_SKEWS=${L2_NUM_SKEWS:-2}
+L2_TDR=${L2_TDR:-1.75}
+L2_ENCR_LAT=${L2_ENCR_LAT:-3}
+PROG_INTERVAL=${PROG_INTERVAL:-300Hz}
 
-if [[ ! -x ./spurious_occupancy_nolibc ]]; then
-  echo "Missing ./spurious_occupancy_nolibc. Build it via the minimal sanity script first." >&2
-  exit 1
-fi
-rm -f ./spurious_occupancy
-ln -s spurious_occupancy_nolibc spurious_occupancy
+rc_activate_py27
+rc_select_sender
 
 mkdir -p "$OUTDIR"
 
-echo "[*] Running CEASER-S O3 with no-libc test binary..."
-"$GEM5" --outdir "$OUTDIR" \
-  "$CFG" \
-  --num-cpus=1 \
-  --mem-size=8GB \
-  --mem-type=DDR4_2400_8x8 \
-  --caches --l2cache \
-  --l1d_size=512B --l1i_size=32kB --l2_size=16MB \
-  --l1d_assoc=8 --l1i_assoc=8 --l2_assoc=16 \
-  --mirage_mode=ceaser \
-  --l2_numSkews=2 \
-  --l2_TDR=1.75 \
-  --l2_EncrLat=3 \
-  --prog-interval=300Hz
+echo "[*] Running CEASER-S O3 with sender: $SENDER_MODE"
 
-echo "✔ CEASER-S done. See $OUTDIR/"
+set -- "$CFG" \
+  --num-cpus="$NUM_CPUS" \
+  --mem-size="$MEM_SIZE" \
+  --mem-type="$MEM_TYPE" \
+  --caches --l2cache \
+  --l1d_size="$L1D_SIZE" --l1i_size="$L1I_SIZE" --l2_size="$L2_SIZE" \
+  --l1d_assoc="$L1D_ASSOC" --l1i_assoc="$L1I_ASSOC" --l2_assoc="$L2_ASSOC" \
+  --mirage_mode="$MIRAGE_MODE" \
+  --l2_numSkews="$L2_NUM_SKEWS" \
+  --l2_TDR="$L2_TDR" \
+  --l2_EncrLat="$L2_ENCR_LAT" \
+  --prog-interval="$PROG_INTERVAL"
+
+"$GEM5" --outdir "$OUTDIR" "$@"
