@@ -1,12 +1,13 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Run CEASER SPEC06 with DerivO3CPU defaults.
+set -euo pipefail
 
-set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/run_common.sh"
 
-BASE_DIR=${BASE_DIR:-"$(cd "$(dirname "$0")/.." && pwd)"}
 GEM5="$BASE_DIR/ceaser/perf_analysis/gem5/build/X86/gem5.opt"
 CONFIG="$BASE_DIR/ceaser/perf_analysis/gem5/configs/example/spec06_config_multiprogram_o3_example.py"
-OUTDIR="./stats_o3_spec_ceaser"
+OUTDIR="${OUTDIR:-./stats_o3_spec_ceaser}"
 
 NUM_CPUS=${NUM_CPUS:-1}
 MEM_SIZE=${MEM_SIZE:-8GB}
@@ -24,15 +25,18 @@ L2_ENCR_LAT=${L2_ENCR_LAT:-3}
 PROG_INTERVAL=${PROG_INTERVAL:-300Hz}
 
 BENCH_ARG=${SPEC_BENCH:-}
-if [ -z "$BENCH_ARG" ] && [ $# -gt 0 ]; then
+if [[ -z "$BENCH_ARG" && $# -gt 0 ]]; then
   BENCH_ARG=$1
   shift
 fi
 EXTRA_ARGS="$@"
 
-gcc -o spurious_occupancy "$BASE_DIR/randomized_cache_hello_world/spurious_occupancy.c" -static
+rc_activate_py27
+rc_select_sender
 
 mkdir -p "$OUTDIR"
+
+echo "[*] Running CEASER O3 SPEC06 with sender: $SENDER_MODE"
 
 set -- "$CONFIG" \
   --num-cpus="$NUM_CPUS" \
@@ -47,10 +51,10 @@ set -- "$CONFIG" \
   --l2_EncrLat="$L2_ENCR_LAT" \
   --prog-interval="$PROG_INTERVAL"
 
-if [ -n "$BENCH_ARG" ]; then
+if [[ -n "$BENCH_ARG" ]]; then
   set -- "$@" --benchmark="$BENCH_ARG"
 fi
-if [ -n "$EXTRA_ARGS" ]; then
+if [[ -n "$EXTRA_ARGS" ]]; then
   set -- "$@" $EXTRA_ARGS
 fi
 

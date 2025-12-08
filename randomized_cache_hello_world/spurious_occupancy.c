@@ -11,6 +11,7 @@ uint64_t extra_data[SPURIOUS_OCC];
 int main(){
  uint8_t data; 
  for(int i = 0; i <  SPURIOUS_OCC; i++)
- 	data = extra_data[i] + 10; 
+        data = extra_data[i] + 10;
+ (void)data;
  printf("Spurious Occupancy step finished.\n"); 
 }
