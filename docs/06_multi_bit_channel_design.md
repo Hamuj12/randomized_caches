@@ -18,4 +18,4 @@ Each SPEC run currently carries one symbol alphabet and sequence via `RC_SYMBOLS
   - `THRESHOLDS="22,46,70" SYMBOLS="A,B,C,D" RUN_GLOB="stats_o3_spec_*" ./run_decode_example.sh`
 - Compare decoded streams against the ground truth embedded in each run's metadata (when available) to spot drift across forks or CPU types. Metadata values such as `symbols` may be comma-separated or a bare string; the decoder will handle either and warn when the truth length does not line up with the occupancy vector.
 
-The decoder remains compatible with older runs that lack group counters or metadata; it will automatically fall back to task-level occupancy or total occupancy and emit a decoded stream based on the provided thresholds.
+The decoder remains compatible with older runs that lack group counters or metadata; it will automatically fall back to task-level occupancy or total occupancy and emit a decoded stream based on the provided thresholds. For a narrative walkthrough of the end-to-end pipeline and intuition behind the parameter choices, see `docs/08_multibit_channel_intuition.md`.
