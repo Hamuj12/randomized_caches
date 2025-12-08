@@ -50,15 +50,36 @@ def resolve_paths(path):
     return stats_path, metadata_path
 
 
-def extract_occupancies(stats, group_count, task_id):
-    group_keys = []
+def extract_group_values(stats, group_count):
+    groups = []
+    for key, val in stats.items():
+        if not key.startswith('system.l2.tags.occ_group::'):
+            continue
+        try:
+            idx = int(key.split('::', 1)[1])
+        except (IndexError, ValueError):
+            continue
+        groups.append((idx, val))
+
+    if groups:
+        ordered = [val for _, val in sorted(groups, key=lambda item: item[0])]
+        return ordered, 'group'
+
+    legacy = []
     for idx in range(group_count):
         key = 'system.l2.tags.occ_group::%s' % idx
         if key in stats:
-            group_keys.append(key)
-    if group_keys:
-        values = [stats[k] for k in group_keys]
-        return values, 'group'
+            legacy.append(stats[key])
+    if legacy:
+        return legacy, 'group'
+
+    return None
+
+
+def extract_occupancies(stats, group_count, task_id):
+    group_values = extract_group_values(stats, group_count)
+    if group_values:
+        return group_values
 
     task_key = 'system.l2.tags.occ_task_id_percent::%s' % task_id
     if task_key in stats:
@@ -102,6 +123,14 @@ def load_metadata(metadata_path, key):
         if candidate in data:
             return str(data[candidate])
     return None
+
+
+def parse_truth(raw):
+    if raw is None:
+        return []
+    if ',' in raw:
+        return [p for p in parse_symbols(raw) if p]
+    return list(str(raw))
 
 
 def format_values(values):
@@ -161,8 +190,9 @@ def handle_calibrate(args):
         if not os.path.isfile(stats_path):
             sys.stderr.write('Missing stats file: %s\n' % stats_path)
             continue
-        truth = load_metadata(metadata_path, args.metadata_key)
-        if truth is None:
+        truth_raw = load_metadata(metadata_path, args.metadata_key)
+        truth = parse_truth(truth_raw)
+        if not truth:
             sys.stderr.write('No metadata for %s, skipping\n' % stats_path)
             continue
         stats = read_stats_file(stats_path)
@@ -172,11 +202,13 @@ def handle_calibrate(args):
             continue
         seen_runs += 1
         label = os.path.basename(os.path.dirname(stats_path)) or os.path.basename(stats_path)
-        print('%s | mode=%s | occ=[%s] | truth=%s' % (label, mode, format_values(occupancies), truth))
+        print('%s | mode=%s | occ=[%s] | truth=%s' % (label, mode, format_values(occupancies), ''.join(truth)))
         limit = min(len(occupancies), len(truth))
         for idx in range(limit):
             symbol = truth[idx]
             buckets.setdefault(symbol, []).append(occupancies[idx])
+        if limit < len(occupancies) or limit < len(truth):
+            sys.stderr.write('Warning: mismatch between occupancy count and truth in %s\n' % stats_path)
 
     if not buckets:
         sys.stderr.write('No calibration data collected\n')
