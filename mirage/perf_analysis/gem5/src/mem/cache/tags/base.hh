@@ -99,6 +99,9 @@ class BaseTags : public ClockedObject
     /** the number of blocks in the cache */
     const unsigned numBlocks;
 
+    /** Number of logical occupancy groups tracked for stats. */
+    const unsigned numOccGroups;
+
     /** The data blocks, 1 per cache block. */
     std::unique_ptr<uint8_t[]> dataBlks;
 
@@ -141,6 +144,9 @@ class BaseTags : public ClockedObject
 
         /** Average occ % of each requestor using the cache */
         Stats::Formula avgOccs;
+
+        /** Occupied blocks per logical set group. */
+        Stats::Vector occGroup;
 
         /** Occupancy of each context/cpu using the cache */
         Stats::Vector occupanciesTaskId;

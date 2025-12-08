@@ -1,0 +1,1 @@
+- Cache tag stats now publish `occ_group` vectors (e.g., `system.l2.tags.occ_group::N`) so decoders can read per-group occupancy alongside calibration traces.
