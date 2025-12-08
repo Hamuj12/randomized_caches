@@ -8,6 +8,7 @@ source "$SCRIPT_DIR/run_common.sh"
 GEM5="$BASE_DIR/ceaser/perf_analysis/gem5/build/X86/gem5.opt"
 CONFIG="$BASE_DIR/ceaser/perf_analysis/gem5/configs/example/spec06_config_multiprogram_o3_example.py"
 OUTDIR="${OUTDIR:-./stats_o3_spec_ceaser}"
+SENDER_MODE=${SENDER_MODE:-multibit}
 
 NUM_CPUS=${NUM_CPUS:-1}
 MEM_SIZE=${MEM_SIZE:-8GB}
@@ -35,6 +36,7 @@ rc_activate_py27
 rc_select_sender
 
 mkdir -p "$OUTDIR"
+rc_write_spec_metadata "$OUTDIR" "$BENCH_ARG"
 
 echo "[*] Running CEASER O3 SPEC06 with sender: $SENDER_MODE"
 
