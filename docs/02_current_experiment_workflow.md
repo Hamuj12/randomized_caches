@@ -1,6 +1,16 @@
 # Current experiment workflow
 
-Use the helper scripts under `randomized_cache_hello_world` to launch common runs. They keep the default TimingSimpleCPU flow intact while adding DerivO3CPU entry points for SPEC06.
+Use the helper scripts under `randomized_cache_hello_world` to launch common runs. TimingSimpleCPU remains the default for the legacy helpers while DerivO3CPU entry points cover both hello-world and SPEC06 flows.
+
+## Hello-world O3 helpers
+
+The nolibc sender examples that default to DerivO3CPU:
+- `./run_mirage_o3_lrc.sh`
+- `./run_ceaser_o3_lrc.sh`
+- `./run_ceaser_s_o3_lrc.sh`
+- `./run_sasscache_o3_lrc.sh`
+
+They match the legacy `_lrc.sh` scripts flag-for-flag except they rely on the `_o3_example` configs to inject `--cpu-type=DerivO3CPU`. Pass `--cpu-type=TimingSimpleCPU` if you want to force the old model.
 
 ## SPEC06 + multi-bit workflow
 
